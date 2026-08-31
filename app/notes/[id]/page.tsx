@@ -3,7 +3,7 @@ import {
   HydrationBoundary,
   dehydrate,
 } from "@tanstack/react-query";
-import { fetchNoteById } from "@/lib/api"; // Функція має називатися fetchNoteById за ТЗ
+import { fetchNoteById } from "@/lib/api/notes"; // Функція має називатися fetchNoteById за ТЗ
 import NoteDetailsClient from "@/app/notes/[id]/NoteDetails.client";
 
 interface NoteDetailsProps {
