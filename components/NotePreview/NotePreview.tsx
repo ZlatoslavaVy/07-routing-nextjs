@@ -16,9 +16,9 @@ export default function NoteDetails({ note }: Props) {
         
         <p className={css.content}>{note.content}</p>
         
-        {note.date && (
+        {note.createdAt && (
           <span className={css.date}>
-            {new Date(note.date).toLocaleDateString()}
+            {new Date(note.createdAt).toLocaleDateString()}
           </span>
         )}
       </div>
