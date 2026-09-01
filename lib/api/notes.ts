@@ -37,6 +37,10 @@ export const fetchNotes = async (params?: FetchNotesParams) => {
     queryParams.perPage = params.perPage;
   }
 
+  if (params?.search) {
+    queryParams.search = params.search;
+  }
+
   const response = await api.get<FetchNotesResponse>("", {
     params: queryParams,
   });

@@ -1,6 +1,6 @@
+import { QueryClient, HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api/notes";
-import NoteList from "@/components/NoteList/NoteList";
-import NotesPage from "@/components/NotesPage/NotesPage";
+import NotesClient from "@/app/notes/Notes.client";
 
 type Props = {
   params: Promise<{ slug?: string[] }>;
@@ -10,17 +10,22 @@ export default async function FilteredNotesPage({ params }: Props) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
   
-  // Отримуємо тег із масиву catch-all маршруту або ставимо 'all' за замовчуванням
+  // Витягуємо тег
   const tagParam = slug?.[0] || "all";
-  
-  // Якщо вибрано 'all', передаємо undefined, щоб бекенд не отримував зайвий параметр
   const tag = tagParam.toLowerCase() === "all" ? undefined : tagParam;
 
-  const data = await fetchNotes({ tag });
+  const queryClient = new QueryClient();
+
+  // Робимо prefetch запит ВЖЕ З УРАХУВАННЯМ ТЕГУ
+  await queryClient.prefetchQuery({
+    queryKey: ["notes", "", 1, tag], 
+    queryFn: () => fetchNotes({ page: 1, perPage: 12, search: "", tag }),
+  });
 
   return (
-    <NotesPage>
-      <NoteList notes={data.notes} />
-    </NotesPage>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      {/* Передаємо тег у NotesClient, щоб він знав, що ми відфільтрували */}
+      <NotesClient initialTag={tag} />
+    </HydrationBoundary>
   );
 }

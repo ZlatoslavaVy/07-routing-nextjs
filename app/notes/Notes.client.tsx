@@ -15,9 +15,13 @@ import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 
 // Зверни увагу: переконайся, що імпортуєш правильний файл стилів для цієї сторінки
-import css from "./NotesPage.module.css"; 
+import css from "@/components/NotesPage/NotesPage.module.css"; 
 
-export default function NotesClient() {
+interface NotesClientProps {
+  initialTag?: string;
+}
+
+export default function NotesClient({initialTag}: NotesClientProps) {
   const [queryInput, setQueryInput] = useState("");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,8 +42,8 @@ export default function NotesClient() {
 
   // Запит на отримання нотаток
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["notes", search, currentPage],
-    queryFn: () => fetchNotes({ page: currentPage, perPage: 12, search }),
+    queryKey: ["notes", search, currentPage, initialTag],
+    queryFn: () => fetchNotes({ page: currentPage, perPage: 12, search, tag: initialTag }),
     placeholderData: keepPreviousData,
     refetchOnMount: false,
   });
