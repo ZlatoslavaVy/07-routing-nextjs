@@ -1,4 +1,5 @@
 import Modal from '@/components/Modal/Modal';
+import NoteDetails from "@/components/NoteDetails/NoteDetails"
 import { fetchNoteById } from '@/lib/api/notes';
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
 
 export default async function NotePreview({ params }: Props) {
   const { id } = await params;
+  
   
   // Отримуємо дані конкретної нотатки за її id з API
   const note = await fetchNoteById(id);
@@ -17,9 +19,7 @@ export default async function NotePreview({ params }: Props) {
 
   return (
     <Modal>
-      {/* Виводимо деталі нотатки. Залежно від того, які ще поля є в об'єкті Note (дати, теги), можеш додати їх сюди */}
-      <h2>{note.title}</h2>
-      <p>{note.content}</p>
+      <NoteDetails note={note}/>
     </Modal>
   );
 }

@@ -24,8 +24,22 @@ interface FetchNotesParams {
 }
 
 
-export const fetchNotes = async (params: FetchNotesParams): Promise<FetchNotesResponse> => {
-  const response = await api.get<FetchNotesResponse>("", { params });
+export const fetchNotes = async (params?: FetchNotesParams) => {
+  const queryParams: Record<string, string | number> = {};
+
+  if (params?.tag && params.tag !== "all") {
+    queryParams.tag = params.tag;
+  }
+  if (params?.page) {
+    queryParams.page = params.page;
+  }
+  if (params?.perPage) {
+    queryParams.perPage = params.perPage;
+  }
+
+  const response = await api.get<FetchNotesResponse>("", {
+    params: queryParams,
+  });
   return response.data;
 };
 

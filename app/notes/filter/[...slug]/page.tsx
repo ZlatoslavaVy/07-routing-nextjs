@@ -1,27 +1,26 @@
-import { fetchNotes } from '@/lib/api/notes'; // функція API
-import NoteList from '@/components/NoteList/NoteList';
+import { fetchNotes } from "@/lib/api/notes";
+import NoteList from "@/components/NoteList/NoteList";
+import NotesPage from "@/components/NotesPage/NotesPage";
 
 type Props = {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug?: string[] }>;
 };
 
 export default async function FilteredNotesPage({ params }: Props) {
-  const { slug } = await params;
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
   
-  // Якщо вибрано 'all', передаємо undefined (або нічого) у функцію запиту
-  const currentTag = slug[0] === 'all' ? undefined : slug[0];
+  // Отримуємо тег із масиву catch-all маршруту або ставимо 'all' за замовчуванням
+  const tagParam = slug?.[0] || "all";
   
-  // Зверни увагу: переконайся, що твоя функція getNotes приймає tag як параметр 
-  // і передає його в axios params
-  const response = await fetchNotes({tag: currentTag}); 
+  // Якщо вибрано 'all', передаємо undefined, щоб бекенд не отримував зайвий параметр
+  const tag = tagParam.toLowerCase() === "all" ? undefined : tagParam;
+
+  const data = await fetchNotes({ tag });
 
   return (
-    <div>
-      {response.notes.length > 0 ? (
-        <NoteList notes={response.notes} />
-      ) : (
-        <p>No notes found for this tag.</p>
-      )}
-    </div>
+    <NotesPage>
+      <NoteList notes={data.notes} />
+    </NotesPage>
   );
 }
